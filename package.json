@@ -4,12 +4,12 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "azure-storage": "^2.10.3",
+    "@azure/storage-blob": "^12.2.0-preview.1",
+    "dayjs": "^1.8.34",
     "dotenv": "^8.2.0",
     "glob": "^7.1.6",
     "glob-promise": "^3.4.0",
-    "lodash": "^4.17.20",
-    "moment": "^2.27.0"
+    "lodash": "^4.17.20"
   },
   "bin": {
     "azure-deploy": "index.js"
