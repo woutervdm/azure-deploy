@@ -50,7 +50,11 @@ const listAll = async () => {
 };
 
 const upload = async (source, dest) => new Promise((accept, reject) => {
-  blobService.createBlockBlobFromLocalFile(containerName, dest, source, err => {
+  blobService.createBlockBlobFromLocalFile(containerName, dest, source, {
+    .../\.(js|css|woff|ttf|png|jpg|svg)$/.exec(dest) ? {contentSettings: {
+      cacheControl: 'public,max-age=31536000'
+    }} : {}
+  }, err => {
     if (err) {
       reject(err);
     }
