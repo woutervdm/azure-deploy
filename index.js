@@ -7,7 +7,10 @@ const glob = require('glob-promise');
 const _ = require('lodash');
 const dayjs = require('dayjs');
 const util = require('util');
+const { lookup } = require('mime-types');
 const { createReadStream, ...fs } = require('fs');
+
+const { purgeCache } = require('./cdn');
 
 const stat = util.promisify(fs.stat);
 
@@ -41,13 +44,13 @@ async function listAll() {
 
 async function upload(source, dest) {
   const blockBlobClient =  containerClient.getBlockBlobClient(dest);
-  if (/\.(js|css|woff|ttf|png|jpg|svg|ico)$/.exec(dest)) {
-    await blockBlobClient.setHTTPHeaders({
-      blobCacheControl: 'public,max-age=31536000'
-    });
-  }
 
-  return blockBlobClient.uploadFile(source);
+  await blockBlobClient.uploadFile(source, {
+    blobHTTPHeaders: {
+      blobContentType: lookup(source),
+      .../\.(js|css|woff|ttf|png|jpg|svg|ico)$/.exec(dest) ? { blobCacheControl: 'public,max-age=31536000' } : {}
+    }
+  });
 }
 
 (async () => {
@@ -90,6 +93,10 @@ async function upload(source, dest) {
     await blobService.getBlobBatchClient().deleteBlobs(
       deletedFiles.slice(i, i+256).map(file => containerClient.getBlobClient(file))
     );
+  }
+
+  if (process.env.AZURE_CLIENT_ID) {
+    await purgeCache();
   }
 })().catch(e => {
   console.error(e);
