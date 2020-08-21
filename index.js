@@ -10,8 +10,6 @@ const util = require('util');
 const { lookup } = require('mime-types');
 const { createReadStream, ...fs } = require('fs');
 
-const { purgeCache } = require('./cdn');
-
 const stat = util.promisify(fs.stat);
 
 const containerName = '$web';
@@ -93,10 +91,6 @@ async function upload(source, dest) {
     await blobService.getBlobBatchClient().deleteBlobs(
       deletedFiles.slice(i, i+256).map(file => containerClient.getBlobClient(file))
     );
-  }
-
-  if (process.env.AZURE_CLIENT_ID) {
-    await purgeCache();
   }
 })().catch(e => {
   console.error(e);
