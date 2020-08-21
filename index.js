@@ -47,7 +47,7 @@ async function upload(source, dest) {
 
   await blockBlobClient.uploadFile(source, {
     blobHTTPHeaders: {
-      blobContentType: lookup(source),
+      blobContentType: lookup(source) || 'application/octet-stream',
       .../\.(js|css|woff|ttf|png|jpg|svg|ico)$/.exec(dest) ? { blobCacheControl: 'public,max-age=31536000' } : {}
     }
   });
@@ -74,8 +74,8 @@ async function upload(source, dest) {
   for (let entry of toCheck) {
     const { mtime } = await stat(`${source}/${entry}`);
 
-    const lastModified = dayjs(entryByName[entry].lastModified);
-    if (lastModified < dayjs(mtime)) {
+    const lastModified = dayjs(entryByName[entry].properties.lastModified);
+    if (lastModified.isBefore(dayjs(mtime))) {
       newerFiles.push(entry);
     }
   }
