@@ -46,7 +46,9 @@ async function upload(source, dest) {
   await blockBlobClient.uploadFile(source, {
     blobHTTPHeaders: {
       blobContentType: lookup(source) || 'application/octet-stream',
-      .../\.(js|css|woff|ttf|png|jpg|svg|ico)$/.exec(dest) ? { blobCacheControl: 'public,max-age=31536000' } : {}
+      blobCacheControl: /\.(js|css|woff|ttf|png|jpg|svg|ico)$/.exec(dest) ?
+        'public,max-age=31536000' :
+        'public,max-age=120'
     }
   });
 }
