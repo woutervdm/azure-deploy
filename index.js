@@ -49,8 +49,7 @@ async function upload(source, dest) {
       blobContentType,
       blobCacheControl: /\.(js|css|woff|ttf|png|jpg|svg|ico)$/.exec(dest) ?
         'public,max-age=31536000' :
-        'public,max-age=120',
-      ...blobContentType.startsWith('text/')? { blobContentEncoding: 'UTF-8' } : {}
+        'public,max-age=120'
     }
   });
 }
