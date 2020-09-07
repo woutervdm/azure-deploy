@@ -43,12 +43,14 @@ async function listAll() {
 async function upload(source, dest) {
   const blockBlobClient =  containerClient.getBlockBlobClient(dest);
 
+  let blobContentType = lookup(source) || 'application/octet-stream';
   await blockBlobClient.uploadFile(source, {
     blobHTTPHeaders: {
-      blobContentType: lookup(source) || 'application/octet-stream',
+      blobContentType,
       blobCacheControl: /\.(js|css|woff|ttf|png|jpg|svg|ico)$/.exec(dest) ?
         'public,max-age=31536000' :
-        'public,max-age=120'
+        'public,max-age=120',
+      ...blobContentType.startsWith('text/')? { blobContentEncoding: 'UTF-8' } : {}
     }
   });
 }
