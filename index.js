@@ -55,6 +55,7 @@ async function upload(source, dest) {
 }
 
 (async () => {
+  const verbose = process.argv.includes('-v');
   const files = await glob('**', { cwd: source, nodir: true });
 
   const entries = await listAll();
@@ -82,12 +83,16 @@ async function upload(source, dest) {
   }
 
   for (let entry of newFiles.concat(newerFiles)) {
-    console.log(`Uploading ${entry}`);
+    if (verbose) {
+      console.log(`Uploading ${entry}`);
+    }
     await upload(`${source}/${entry}`, entry);
   }
 
-  for (let entry of deletedFiles) {
-    console.log(`Deleting ${entry}`);
+  if (verbose) {
+    for (let entry of deletedFiles) {
+      console.log(`Deleting ${entry}`);
+    }
   }
 
   for(let i=0; i<deletedFiles.length; i+=256) {
