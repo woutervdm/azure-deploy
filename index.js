@@ -44,6 +44,11 @@ async function upload(source, dest) {
   const blockBlobClient =  containerClient.getBlockBlobClient(dest);
 
   let blobContentType = lookup(source) || 'application/octet-stream';
+  if (blobContentType.startsWith('text/')) {
+    // add charset
+    blobContentType += '; charset=UTF-8';
+  }
+
   await blockBlobClient.uploadFile(source, {
     blobHTTPHeaders: {
       blobContentType,
